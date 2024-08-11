@@ -8,10 +8,11 @@ import {
   Query,
   ParseIntPipe,
   ValidationPipe,
+  Patch,
 } from '@nestjs/common';
-import { AccountsService } from './accounts.service';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
+import { AccountsService } from '../../domian/accounts/accounts.service';
+import { CreateAccountDto } from '../dto/create-account.dto';
+import { UpdateAccountDto } from '../dto/update-account.dto';
 
 @Controller('accounts') // accounts
 export class AccountsController {
@@ -32,7 +33,7 @@ export class AccountsController {
     return this.accountsService.create(account);
   }
 
-  @Get(':id') // PATCH /accounts/:id
+  @Patch(':id') // PATCH /accounts/:id
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) userUpdate: UpdateAccountDto,
