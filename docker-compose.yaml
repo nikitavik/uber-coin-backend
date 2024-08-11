@@ -1,0 +1,61 @@
+# For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: ./docker/server/Dockerfile
+    environment:
+      PORT: 3005
+    expose:
+      - 3005
+    ports:
+      - 3004:3005
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      database:
+        condition: service_healthy
+    command: npm run start:prod
+
+  database:
+    build:
+      context: ./docker/postgresql
+      shm_size: 128mb
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_DB=uber-coin
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: nest-pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin4
+    ports:
+      - 5050:80
+    depends_on:
+      - database
+
+secrets:
+  db-password:
+    file: db/password.txt
+
+volumes:
+  postgres:
