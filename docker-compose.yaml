@@ -12,8 +12,8 @@ services:
     ports:
       - 3004:3005
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - .:/usr/app/src
+#      - /usr/src/app/node_modules
     depends_on:
       database:
         condition: service_healthy
