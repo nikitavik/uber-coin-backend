@@ -5,10 +5,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AccountsModule } from './domian/accounts/accounts.module';
 import { UserModule } from './domian/user/user.module';
-import { User } from './domian/user/user.entity';
+import { UserAccount } from './domian/user/user.entity';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as process from 'node:process';
 import { Currency } from './domian/currency/currency.entity';
+import { Accounts } from './domian/accounts/accounts.entity';
+import { AuthModule } from './domian/auth/auth.module';
 
 dotenv.config();
 
@@ -19,12 +21,18 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  entities: [User, Currency],
+  entities: [UserAccount, Currency, Accounts],
   synchronize: process.env.NODE_ENV !== 'production',
+  autoLoadEntities: process.env.NODE_ENV !== 'production',
 };
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig), AccountsModule, UserModule],
+  imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
+    AccountsModule,
+    UserModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

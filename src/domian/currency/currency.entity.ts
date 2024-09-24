@@ -1,12 +1,10 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity({
-  name: 'users',
-})
+@Entity()
 export class Currency {
   @PrimaryColumn()
   id: number;
 
-  @Column()
+  @Column({ default: 'unknown' })
   name: string;
 }
