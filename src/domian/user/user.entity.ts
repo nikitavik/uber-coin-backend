@@ -1,22 +1,33 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Currency } from '../currency/currency.entity';
 
-@Entity()
-export class User {
-  @PrimaryGeneratedColumn()
+@Entity({ name: 'user_account' })
+export class UserAccount {
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column({
-    type: 'varchar',
+  @Column('varchar', {
+    length: 320 /* According to email standards (RFC 5321 and RFC 5322),
+                   the maximum length of an email address is 320 characters */,
+    unique: true,
   })
   email: string;
 
-  @Column({
-    type: 'varchar',
+  @Column('varchar')
+  password: string;
+
+  @Column('varchar', {
+    length: 200,
   })
   name: string;
 
-  @Column({
+  @CreateDateColumn({
     type: 'timestamptz',
   })
   created_at: string;

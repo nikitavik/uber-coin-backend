@@ -5,11 +5,6 @@ import { UserService } from '../../domian/user/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.userService.create(createUserDto);
-  // }
-
   @Get()
   findAll() {
     return this.userService.findAll();
