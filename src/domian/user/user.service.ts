@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { UserAccount } from './user.entity';
+import { UserAccount } from './entities/user.entity';
 import { RegisterUserDto } from '../../application/dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -18,10 +18,10 @@ export class UserService {
     return this.usersRepository.find();
   }
 
-  findOne(id: number): Promise<UserAccount> {
+  findOne(uuid: string): Promise<UserAccount> {
     return this.usersRepository.findOne({
       where: {
-        id,
+        id: uuid,
       },
     });
   }
@@ -45,15 +45,12 @@ export class UserService {
     const userPayload: RegisterUserDto = {
       name: createUserDto.name,
       email: createUserDto.email,
+      currencyId: createUserDto.currencyId,
       password: hashedPassword,
     };
 
     const newUser = this.usersRepository.create(userPayload);
 
     return this.usersRepository.save(newUser);
-  }
-
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
   }
 }

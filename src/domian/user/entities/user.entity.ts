@@ -2,15 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Currency } from '../currency/currency.entity';
+import { Accounts } from '../../accounts/entities/accounts.entity';
 
 @Entity({ name: 'user_account' })
 export class UserAccount {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column('varchar', {
     length: 320 /* According to email standards (RFC 5321 and RFC 5322),
@@ -30,8 +30,12 @@ export class UserAccount {
   @CreateDateColumn({
     type: 'timestamptz',
   })
-  created_at: string;
+  createdAt: string;
 
-  @ManyToOne(() => Currency, (currency) => currency.id)
-  currency_id: number;
+  // TODO: Add currencies
+  // @OneToMany(() => Currency, (currency) => currency.id)
+  // currency: number;
+
+  @OneToMany(() => Accounts, (account) => account.user, { nullable: false })
+  accounts: Accounts[];
 }
