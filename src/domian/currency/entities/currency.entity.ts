@@ -5,6 +5,6 @@ export class Currency {
   @PrimaryColumn()
   id: number;
 
-  @Column({ default: 'unknown' })
+  @Column()
   name: string;
 }

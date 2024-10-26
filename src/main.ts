@@ -8,8 +8,6 @@ import { config } from './swagger';
 import { SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  console.log(process.env);
-
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({ logger: true }),
