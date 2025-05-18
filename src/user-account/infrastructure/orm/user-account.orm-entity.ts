@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { MoneyAccountOrmEntity } from '../../../money-account/infrastructure/orm/money-account.orm-entity';
 
-@Entity({ name: 'users_account' })
+@Entity({ name: 'user_account' })
 export class UserAccountOrmEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

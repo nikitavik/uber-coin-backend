@@ -29,6 +29,7 @@ export class MoneyAccountRepositoryImpl implements IMoneyAccountRepository {
     ormEntity.id = entity.id;
     ormEntity.name = entity.name;
     ormEntity.amount = entity.amount;
+    ormEntity.colorHex = entity.colorHex;
     ormEntity.userId = entity.userId;
     return ormEntity;
   }
