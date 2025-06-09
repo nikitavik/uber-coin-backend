@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 
 import { UserAccountRepositoryImpl } from '../../infrastructure/repositories/user-account.repository.impl';
-import { RegisterUserDto } from '../dto/register-user.dto';
 import { UserAccountEntity } from '../../domain/entities/user-account.entity';
+import { RegisterUserDto } from '../../../auth/application/dto/register-user.dto';
 
 @Injectable()
 export class UserService {
@@ -31,6 +35,16 @@ export class UserService {
       [],
     );
 
-    return this.userAccountRepo.create(userAccount);
+    try {
+      return await this.userAccountRepo.create(userAccount);
+    } catch (error) {
+      if (error.code === '23505' && error.detail?.includes('email')) {
+        throw new ConflictException('User with this email already exists');
+      }
+
+      throw new InternalServerErrorException(
+        'Invalid email or user already exists',
+      );
+    }
   }
 }

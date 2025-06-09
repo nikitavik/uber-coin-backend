@@ -9,8 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { FastifyRequest } from 'fastify';
 
-import { jwtConstants } from './constants';
-import { ExtendedJwtPayload } from './auth.service';
+import { jwtConstants } from './infrastructure/constants';
+import { ExtendedJwtPayload } from './application/services/auth.service';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 

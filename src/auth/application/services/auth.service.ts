@@ -5,11 +5,12 @@ import {
 } from '@nestjs/common';
 import { JwtPayload } from 'jsonwebtoken';
 import { JwtService } from '@nestjs/jwt';
-
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from '../user-account/application/dto/login.dto';
-import { RegisterUserDto } from '../user-account/application/dto/register-user.dto';
-import { UserService } from '../user-account/application/services/user.service';
+
+import { LoginDto } from '../dto/login.dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { AuthResponseDto } from '../dto/auth-response.dto';
+import { UserService } from '../../../user-account/application/services/user.service';
 
 // TODO: Move somewhere
 export type ExtendedJwtPayload = JwtPayload & {
@@ -24,19 +25,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: LoginDto): Promise<{ accessToken: string }> {
+  async signIn(signInDto: LoginDto): Promise<AuthResponseDto> {
     const { password, email } = signInDto;
 
     const user = await this.usersService.findOneByEmail(email);
-
-    const result = await bcrypt.compare(password, user.password);
 
     if (!user) {
       throw new NotFoundException(`User with email: ${email} not found`);
     }
 
-    if (!result) {
-      throw new UnauthorizedException();
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const jwtPayload: ExtendedJwtPayload = {
@@ -50,14 +51,17 @@ export class AuthService {
     };
   }
 
-  async register(createUserDto: RegisterUserDto) {
+  async register(createUserDto: RegisterUserDto): Promise<AuthResponseDto> {
     const newUser = await this.usersService.createUser(createUserDto);
 
-    const signInDto: LoginDto = {
+    const signInDto: ExtendedJwtPayload = {
+      sub: String(newUser.id),
+      username: newUser.name,
       email: newUser.email,
-      password: createUserDto.password,
     };
 
-    return await this.signIn(signInDto);
+    return {
+      accessToken: await this.jwtService.signAsync(signInDto),
+    };
   }
 }
